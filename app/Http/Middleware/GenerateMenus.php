@@ -25,25 +25,25 @@ class GenerateMenus
                 'smt' => collect([1,2]),
                 'cara_penilaian' => collect(['lengkap', 'sederhana'])
             ])->append($this->setAppend())->prepend($this->icon('home'))->link->attr($this->text_class());
-            $menu->group([], function($menu){
-                $menu->add('Sinkronisasi', 'javascript:void(0)')->data([
-                    'role' => ['admin'], 
-                    'smt' => collect([1,2]),
-                    'cara_penilaian' => collect(['lengkap', 'sederhana'])
-                ])->append($this->setAppend())->prepend($this->icon('refresh'))->nickname('sinkronisasi')->link->attr($this->text_class());
-                $menu->group(['prefix' => 'sinkronisasi'], function($menu){
-                    $menu->sinkronisasi->add('Dapodik', 'dapodik')->data([
-                        'role' => ['admin'], 
-                        'smt' => collect([1,2]),
-                        'cara_penilaian' => collect(['lengkap', 'sederhana'])
-                    ])->append($this->setAppend())->prepend($this->icon('download'))->link->attr($this->text_class());
-                    $menu->sinkronisasi->add('e-Rapor', 'erapor')->data([
-                        'role' => ['admin'], 
-                        'smt' => collect([1,2]),
-                        'cara_penilaian' => collect(['lengkap', 'sederhana'])
-                    ])->append($this->setAppend())->prepend($this->icon('upload'))->link->attr($this->text_class());
-                });
-            });
+            // $menu->group([], function($menu){
+            //     $menu->add('Sinkronisasi', 'javascript:void(0)')->data([
+            //         'role' => ['admin'], 
+            //         'smt' => collect([1,2]),
+            //         'cara_penilaian' => collect(['lengkap', 'sederhana'])
+            //     ])->append($this->setAppend())->prepend($this->icon('refresh'))->nickname('sinkronisasi')->link->attr($this->text_class());
+            //     $menu->group(['prefix' => 'sinkronisasi'], function($menu){
+            //         $menu->sinkronisasi->add('Dapodik', 'dapodik')->data([
+            //             'role' => ['admin'], 
+            //             'smt' => collect([1,2]),
+            //             'cara_penilaian' => collect(['lengkap', 'sederhana'])
+            //         ])->append($this->setAppend())->prepend($this->icon('download'))->link->attr($this->text_class());
+            //         $menu->sinkronisasi->add('e-Rapor', 'erapor')->data([
+            //             'role' => ['admin'], 
+            //             'smt' => collect([1,2]),
+            //             'cara_penilaian' => collect(['lengkap', 'sederhana'])
+            //         ])->append($this->setAppend())->prepend($this->icon('upload'))->link->attr($this->text_class());
+            //     });
+            // });
             $menu->group([], function($menu){
                 $menu->add('Pengaturan', 'javascript:void(0)')->data([
                     'role' => ['admin'], 
