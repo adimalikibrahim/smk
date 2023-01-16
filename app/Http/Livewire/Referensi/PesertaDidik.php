@@ -82,6 +82,7 @@ class PesertaDidik extends Component
     public $result = [];
     public $imported_data = [];
     public $file_excel;
+    public $file_path;
     
     public function mount(){
         if($this->loggedUser()->hasRole('wali', session('semester_id'))){
@@ -228,7 +229,7 @@ class PesertaDidik extends Component
                         'jenis_kelamin' => $this->jenis_kelamin[$urut],
                         'tempat_lahir' => $this->tempat_lahir[$urut],
                         'tanggal_lahir' => $this->tanggal_lahir[$urut],
-                        'agama_id' => $agama->agama_id,
+                        'agama_id' => '1',
                         // 'alamat' => $this->alamat_jalan[$urut],
                         // 'rt' => $this->rt[$urut],
                         // 'rw' => $this->rw[$urut],
@@ -244,7 +245,7 @@ class PesertaDidik extends Component
             }
         }
         $this->reset(['imported_data']);
-        $this->reset(['peserta_didik_id', 'no_induk', 'nisn', 'nik', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'agama_id', 'rt', 'rw', 'desa_kelurahan', 'kecamatan', 'kode_pos', 'no_hp', 'email', 'status', 'anak_ke']);
+        // $this->reset(['no_induk', 'nisn', 'nik', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'agama_id', 'rt', 'rw', 'desa_kelurahan', 'kecamatan', 'kode_pos', 'no_hp', 'email', 'status', 'anak_ke']);
         $this->emit('close-modal');
         $this->alert('success', 'Berhasil', [
             'text' => 'Data Instruktur berhasil disimpan'
