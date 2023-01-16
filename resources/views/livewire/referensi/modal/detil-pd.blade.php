@@ -11,7 +11,7 @@
                     <div class="row mb-2">
                         <label for="nama" class="col-sm-3 col-form-label">Nama</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" readonly wire:model="nama">
+                            <input type="text" class="form-control" wire:model="nama">
                         </div>
                     </div>
                     <div class="row mb-2">

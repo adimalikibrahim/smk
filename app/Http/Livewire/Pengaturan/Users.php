@@ -205,7 +205,7 @@ class Users extends Component
                 $user = User::where('peserta_didik_id', $d->peserta_didik_id)->first();
                 if(!$user){
                     $user_email = $this->check_email($d, 'peserta_didik_id');
-                    $user = User::create([
+                    $user = User::updateOrcreate([
                         'name' => $d->nama,
 						'email' => $user_email,
 						'nisn'	=> $d->nisn,
@@ -216,7 +216,10 @@ class Users extends Component
 						'peserta_didik_id'	=> $d->peserta_didik_id,
 						'default_password' => $new_password,
                     ]);
-                }
+            } else {
+                $user->name = $d->nama;
+                $user->save();
+            }
                 $user->detachRole($adminRole, session('semester_id'));
                 if(!$user->hasRole($role, session('semester_id'))){
                     $user->attachRole($role, session('semester_id'));

@@ -19,7 +19,7 @@ use Livewire\WithFileUploads;
 use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Agama;
 
-class PesertaDidikAktif extends Component
+class PesertaDidik extends Component
 {
     use WithPagination, WithFileUploads, LivewireAlert;
     protected $paginationTheme = 'bootstrap';
@@ -91,9 +91,8 @@ class PesertaDidikAktif extends Component
         }
     }
     public function render(){
-        return view('livewire.referensi.peserta-didik-aktif', [
-            'collection' => Peserta_didik::whereHas('anggota_rombel', $this->kondisi())
-            ->with(['anggota_rombel' => $this->kondisi()])
+        return view('livewire.referensi.peserta-didik', [
+            'collection' => Peserta_didik::with(['anggota_rombel' => $this->kondisi()])
             ->orderBy($this->sortby, $this->sortbydesc)
             ->when($this->search, function($query) {
                 $query->where('nama', 'ILIKE', '%' . $this->search . '%');
@@ -125,7 +124,7 @@ class PesertaDidikAktif extends Component
             })->paginate($this->per_page),
             'pekerjaan_wali' => Pekerjaan::get(),
             'breadcrumbs' => [
-                ['link' => "/", 'name' => "Beranda"], ['link' => '#', 'name' => 'Referensi'], ['name' => "Data Peserta Didik Aktif"]
+                ['link' => "/", 'name' => "Beranda"], ['link' => '#', 'name' => 'Referensi'], ['name' => "Data Peserta Didik"]
             ],
             'tombol_add' => ($this->rombongan_belajar_id) ? [
                 'wire' => 'sinkronisasi',
@@ -195,8 +194,9 @@ class PesertaDidikAktif extends Component
         $this->validate(
             [
                 'nama.*' => 'required',
-                // 'nik.*' => 'required|unique:nik',
-                // 'email.*' => 'required|unique:guru,email',
+                'nik.*' => 'required|unique:peserta_didik,nik',
+                'nis.*' => 'required|unique:peserta_didik,no_induk',
+                'nisn.*' => 'required|unique:peserta_didik,nisn',
             ],
             [
                 'nama.*.required' => 'Nama tidak boleh kosong!',
@@ -204,8 +204,9 @@ class PesertaDidikAktif extends Component
                 'nik.*.numeric' => 'NIK harus berupa angka!',
                 // 'nik.*.digits' => 'NIK harus 16 digit!',
                 // 'email.*.required' => 'Email tidak boleh kosong!',
-                // 'email.*.unique' => 'Email sudah terdaftar!',
                 'nik.*.unique' => 'NIK sudah terdaftar!',
+                'nis.*.unique' => 'nis sudah terdaftar!',
+                'nisn.*.unique' => 'nisn sudah terdaftar!',
             ]
         );
         foreach($this->nama as $urut => $nama){
@@ -243,7 +244,7 @@ class PesertaDidikAktif extends Component
             }
         }
         $this->reset(['imported_data']);
-        // $this->reset(['peserta_didik_id', 'no_induk', 'nisn', 'nik', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'agama_id', 'rt', 'rw', 'desa_kelurahan', 'kecamatan', 'kode_pos', 'no_hp', 'email', 'status', 'anak_ke']);
+        $this->reset(['peserta_didik_id', 'no_induk', 'nisn', 'nik', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'agama_id', 'rt', 'rw', 'desa_kelurahan', 'kecamatan', 'kode_pos', 'no_hp', 'email', 'status', 'anak_ke']);
         $this->emit('close-modal');
         $this->alert('success', 'Berhasil', [
             'text' => 'Data Instruktur berhasil disimpan'
@@ -320,6 +321,7 @@ class PesertaDidikAktif extends Component
                 'email.unique' => 'Email sudah terdaftar di Database!',
             ]
         );
+        $this->pd->nama = $this->nama;
         $this->pd->status = $this->status;
         $this->pd->anak_ke = $this->anak_ke;
         $this->pd->diterima_kelas = $this->diterima_kelas;

@@ -86,11 +86,6 @@ class GenerateMenus
                             // 'smt' => collect([1,2]),
                             // 'cara_penilaian' => collect(['lengkap', 'sederhana'])
                         // ])->append($this->setAppend())->prepend($this->icon('graduation-cap'))->link->attr($this->text_class());
-                        $menu->referensi_gtk->add('Guru Keluar', 'guru-keluar')->data([
-                            'role' => ['admin', 'tu'], 
-                            'smt' => collect([1,2]),
-                            'cara_penilaian' => collect(['lengkap', 'sederhana'])
-                        ])->append($this->setAppend())->prepend($this->icon('graduation-cap'))->link->attr($this->text_class());
                         $menu->referensi_gtk->add('Instruktur', 'instruktur')->data([
                             'role' => ['admin', 'tu'], 
                             'smt' => collect([1,2]),
@@ -125,6 +120,11 @@ class GenerateMenus
                         'cara_penilaian' => collect(['lengkap', 'sederhana'])
                     ])->append($this->setAppend())->prepend($this->icon('hand-point-right'))->nickname('pd')->link->attr($this->text_class());
                     $menu->group([], function($menu){
+                        $menu->pd->add('Peserta Didik', 'peserta-didik')->data([
+                            'role' => ['admin', 'guru', 'tu'], 
+                            'smt' => collect([1,2]),
+                            'cara_penilaian' => collect(['lengkap', 'sederhana'])
+                        ])->append($this->setAppend())->prepend($this->icon('hand-point-right'))->link->attr($this->text_class());
                         $menu->pd->add('Peserta Didik Aktif', 'peserta-didik-aktif')->data([
                             'role' => ['admin', 'guru', 'tu'], 
                             'smt' => collect([1,2]),

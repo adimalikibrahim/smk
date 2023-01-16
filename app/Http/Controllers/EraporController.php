@@ -67,6 +67,9 @@ class EraporController extends Controller
     public function rombel_pilihan(){
         return view('content.referensi.rombel-pilihan');
     }
+    public function peserta_didik(){
+        return view('content.referensi.peserta-didik');
+    }
     public function peserta_didik_aktif(){
         return view('content.referensi.peserta-didik-aktif');
     }

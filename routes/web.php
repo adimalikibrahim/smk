@@ -45,12 +45,12 @@ Route::middleware([
     Route::prefix('referensi')->name('referensi.')->middleware('team:admin,guru,tu')->group( function(){
     //Route::group(['prefix' => 'referensi'], function(){
         Route::get('/guru', [EraporController::class, 'guru'])->name('guru');
-        Route::get('/guru-keluar', [EraporController::class, 'guru_keluar'])->name('guru-keluar');
         Route::get('/tendik', [EraporController::class, 'tendik'])->name('tendik');
         Route::get('/instruktur', [EraporController::class, 'instruktur'])->name('instruktur');
         Route::get('/asesor', [EraporController::class, 'asesor'])->name('asesor');
         Route::get('/rombongan-belajar', [EraporController::class, 'rombongan_belajar'])->name('rombongan-belajar')->middleware('team:admin,waka,tu');
         Route::get('/rombel-pilihan', [EraporController::class, 'rombel_pilihan'])->name('rombel-pilihan')->middleware('team:admin,waka,tu');
+        Route::get('/peserta-didik', [EraporController::class, 'peserta_didik'])->name('peserta-didik');
         Route::get('/peserta-didik-aktif', [EraporController::class, 'peserta_didik_aktif'])->name('peserta-didik-aktif');
         Route::get('/peserta-didik-keluar', [EraporController::class, 'peserta_didik_keluar'])->name('peserta-didik-keluar');
         Route::get('/password-peserta-didik', [EraporController::class, 'password_peserta_didik'])->name('password-peserta-didik')->middleware('team:wali');

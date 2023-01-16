@@ -170,9 +170,6 @@
                     @endif
                 </div>
                 <div class="modal-footer">
-                    @if($hapus)
-                    <button type="submit" class="btn btn-danger" wire:click.prevent="hapus()">Hapus</button>
-                    @endif
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                     @if($update)
                     <button type="submit" class="btn btn-primary" wire:click.prevent="perbaharui()">Perbaharui</button>
