@@ -192,7 +192,7 @@
             field: document.getElementById('tanggal_lahir_str'),
             format: 'LL',
             minDate: new Date(),
-            maxDate: new Date(2020, 12, 31),
+            maxDate: new Date(2010, 12, 31),
             onSelect: function() {
                 startDate = this.getDate();
                 Livewire.emit('setTglLahir', startDate)

@@ -5,7 +5,9 @@ namespace App\Http\Livewire\Referensi;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+use Rap2hpoutre\FastExcel\FastExcel;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 use Livewire\Component;
 use App\Models\Guru;
 use App\Models\Gelar;
@@ -19,7 +21,7 @@ use Carbon\Carbon;
 
 class DataGuru extends Component
 {
-    use WithPagination, LivewireAlert;
+    use WithPagination, WithFileUploads, LivewireAlert;
     protected $paginationTheme = 'bootstrap';
     public $search = '';
     public function updatingSearch()
@@ -33,12 +35,13 @@ class DataGuru extends Component
     public $sortbydesc = 'ASC';
     public $per_page = 10;
     public $data = 'Guru';
-    public $hapus = FALSE;
+    public $file_excel;
+    public $imported_data = [];
+    public $hapus = TRUE;
     public $update = TRUE;
     public $guru_id;
     public $readonly;
     public $disabled;
-    public $nama;
     public $gelar_depan = [];
     public $gelar_belakang = [];
     public $ref_gelar_depan = [];
@@ -46,24 +49,30 @@ class DataGuru extends Component
     public $ref_agama = [];
     public $ref_jenis_ptk = [];
     public $ref_status_kepegawaian = [];
-    public $nuptk;
-    public $nip;
-    public $nik;
-    public $jenis_kelamin;
-    public $tempat_lahir;
-    public $tanggal_lahir;
-    public $agama_id;
-    public $alamat;
-    public $rt, $rw;
-    public $desa_kelurahan;
-    public $kecamatan;
-    public $kode_pos;
-    public $no_hp;
-    public $email;
+    public $nama = [];
+    public $nuptk = [];
+    public $nip = [];
+    public $nik = [];
+    public $jenis_kelamin = [];
+    public $tempat_lahir = [];
+    public $tanggal_lahir = [];
+    public $agama = [];
+    public $agama_id = [];
+    public $alamat_jalan = [];
+    public $rt = [];
+    public $rw = [];
+    public $desa_kelurahan = [];
+    public $kecamatan = [];
+    public $kodepos = [];
+    public $kode_pos = [];
+    public $telp_hp = [];
+    public $no_hp = [];
+    public $email = [];
     public $jenis_ptk_id;
     public $status_kepegawaian_id;
     public $dudi_id;
     public $opsi_dudi = FALSE;
+    public $file_path;
     public $tanggal_lahir_str;
 
     protected $listeners = ['confirmed', 'setTglLahir'];
@@ -83,7 +92,121 @@ class DataGuru extends Component
             })->paginate($this->per_page),
             'breadcrumbs' => [
                 ['link' => "/", 'name' => "Beranda"], ['link' => '#', 'name' => 'Referensi'], ['name' => "Data Guru"]
+            ],
+            'tombol_add' => [
+                'wire' => 'addModal',
+                'color' => 'primary',
+                'text' => 'Tambah Data',
+            ],
+        ]);
+    }
+    public function addModal(){
+        $this->emit('showModal');
+    }
+    public function updatedFileExcel()
+    {
+        $this->validate(
+            [
+                'file_excel' => 'required|mimes:xlsx',
+            ],
+            [
+                'file_excel.required' => 'File Excel tidak boleh kosong',
+                'file_excel.mimes' => 'File harus berupa file dengan tipe: xlsx.',
             ]
+        );
+        $this->file_path = $this->file_excel->store('files', 'public');
+        $this->imported_data();
+    }
+    private function imported_data(){
+        $imported_data = (new FastExcel)->import(storage_path('/app/public/'.$this->file_path));
+        $collection = collect($imported_data);
+        $multiplied = $collection->map(function ($items, $key) {
+            foreach($items as $k => $v){
+                $k = str_replace('.','',$k);
+                $k = str_replace(' ','_',$k);
+                $k = str_replace('/','_',$k);
+                $k = strtolower($k);
+                $item[$k] = $v;
+            }
+            return $item;
+        });
+        foreach($multiplied->all() as $urut => $data){
+            $this->nama[$urut] = $data['nama'];
+            $this->nuptk[$urut] = $data['nuptk'];
+            $this->nip[$urut] = $data['nip'];
+            $this->nik[$urut] = $data['nik'];
+            $this->jenis_kelamin[$urut] = $data['jenis_kelamin'];
+            $this->tempat_lahir[$urut] = $data['tempat_lahir'];
+            $this->tanggal_lahir[$urut] = (is_object($data['tanggal_lahir'])) ? $data['tanggal_lahir']->format('Y-m-d') : now()->format('Y-m-d');
+            $this->agama[$urut] = $data['agama'];
+            $this->alamat_jalan[$urut] = $data['alamat_jalan'];
+            $this->rt[$urut] = $data['rt'];
+            $this->rw[$urut] = $data['rw'];
+            $this->desa_kelurahan[$urut] = $data['desa_kelurahan'];
+            $this->kecamatan[$urut] = $data['kecamatan'];
+            $this->kodepos[$urut] = $data['kodepos'];
+            $this->telp_hp[$urut] = $data['telp_hp'];
+            $this->email[$urut] = $data['email'];
+        }
+        $this->imported_data = $multiplied->all();
+    }
+    public function store(){
+        $this->emit('show-tooltip');
+        //$this->imported_data();
+        $this->validate(
+            [
+                'nama.*' => 'required',
+                'nik.*' => 'required|numeric|digits:16|unique:guru,nik',
+                'email.*' => 'required|unique:guru,email',
+            ],
+            [
+                'nama.*.required' => 'Nama tidak boleh kosong!',
+                'nik.*.required' => 'NIK tidak boleh kosong!',
+                'nik.*.numeric' => 'NIK harus berupa angka!',
+                'nik.*.digits' => 'NIK harus 16 digit!',
+                'email.*.required' => 'Email tidak boleh kosong!',
+                'email.*.unique' => 'Email sudah terdaftar!',
+                'nik.*.unique' => 'NIK sudah terdaftar!',
+            ]
+        );
+        foreach($this->nama as $urut => $nama){
+            $agama = Agama::where('nama', $this->agama[$urut])->first();
+            if($agama){
+                Guru::updateOrcreate(
+                    [
+                        'nik' => $this->nik[$urut],
+                    ],
+                    [
+                        'guru_id' => Str::uuid(),
+                        'sekolah_id' => session('sekolah_id'),
+                        'status_kepegawaian_id' => 0,
+                        'kode_wilayah' => '016001AA',
+                        'nama' => $nama,
+                        'nuptk' => $this->nuptk[$urut],
+                        'nip' => $this->nip[$urut],
+                        'jenis_kelamin' => $this->jenis_kelamin[$urut],
+                        'tempat_lahir' => $this->tempat_lahir[$urut],
+                        'tanggal_lahir' => $this->tanggal_lahir[$urut],
+                        'agama_id' => $agama->agama_id,
+                        'alamat' => $this->alamat_jalan[$urut],
+                        'rt' => $this->rt[$urut],
+                        'rw' => $this->rw[$urut],
+                        'desa_kelurahan' => $this->desa_kelurahan[$urut],
+                        'kecamatan' => $this->kecamatan[$urut],
+                        'kode_pos' => $this->kodepos[$urut],
+                        'no_hp' => $this->telp_hp[$urut],
+                        'email' => $this->email[$urut],
+                        'jenis_ptk_id' => 4,
+                        'last_sync' => now(),
+                    ]
+                );
+            }
+        }
+        $this->reset(['imported_data']);
+        $this->reset(['guru_id', 'gelar_depan', 'gelar_belakang', 'nuptk', 'nip', 'nik', 'jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'agama_id', 'rt', 'rw', 'desa_kelurahan', 'kecamatan', 'kode_pos', 'no_hp', 'email', 'jenis_ptk_id', 'status_kepegawaian_id']);
+        $this->emit('close-modal');
+        $this->alert('success', 'Berhasil', [
+            'text' => 'Data Instruktur berhasil disimpan'
         ]);
     }
     private function loggedUser(){
@@ -110,7 +233,9 @@ class DataGuru extends Component
         $this->nik = $this->guru->nik;
         $this->jenis_kelamin = $this->guru->jenis_kelamin;
         $this->tempat_lahir = $this->guru->tempat_lahir;
-        $this->tanggal_lahir = $this->guru->tanggal_lahir_indo;
+        // $this->tanggal_lahir = $this->guru->tanggal_lahir_indo;
+        $this->tanggal_lahir = $this->guru->tanggal_lahir;
+        $this->tanggal_lahir_str = Carbon::createFromTimeStamp(strtotime($this->guru->tanggal_lahir))->translatedFormat('j F Y');
         $this->agama_id = $this->guru->agama_id;
         $this->alamat = $this->guru->alamat;
         $this->rt = $this->guru->rt;
@@ -245,7 +370,30 @@ class DataGuru extends Component
             'position' => 'center'
         ]);
     }
-
+    public function hapus(){
+        $this->alert('question', 'Apakah Anda yakin?', [
+            'text' => 'Tindakan ini tidak dapat dikembalikan!',
+            'showConfirmButton' => true,
+            'confirmButtonText' => 'Yakin',
+            'onConfirmed' => 'confirmed',
+            'showCancelButton' => true,
+            'cancelButtonText' => 'Batal',
+            'allowOutsideClick' => false,//'() => !Swal.isLoading()',
+            'timer' => null
+        ]);
+    }
+    public function confirmed(){
+        if($this->guru && $this->guru->delete()){
+            $this->alert('success', 'Data Guru berhasil dihapus', [
+                'position' => 'center'
+            ]);
+            $this->emit('close-modal');
+        } else {
+            $this->alert('error', 'Data Guru gagal dihapus. Silahkan coba beberapa saat lagi!', [
+                'position' => 'center'
+            ]);
+        }
+    }
     public function setTglLahir($value){
         $this->tanggal_lahir = Carbon::createFromTimeStamp(strtotime($value))->format('Y-m-d');
         $this->tanggal_lahir_str = Carbon::createFromTimeStamp(strtotime($value))->translatedFormat('j F Y');

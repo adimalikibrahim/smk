@@ -49,6 +49,9 @@ class EraporController extends Controller
     public function guru(){
         return view('content.referensi.guru');
     }
+    public function guru_keluar(){
+        return view('content.referensi.guru-keluar');
+    }
     public function tendik(){
         return view('content.referensi.tendik');
     }

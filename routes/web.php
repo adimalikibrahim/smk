@@ -45,6 +45,7 @@ Route::middleware([
     Route::prefix('referensi')->name('referensi.')->middleware('team:admin,guru,tu')->group( function(){
     //Route::group(['prefix' => 'referensi'], function(){
         Route::get('/guru', [EraporController::class, 'guru'])->name('guru');
+        Route::get('/guru-keluar', [EraporController::class, 'guru_keluar'])->name('guru-keluar');
         Route::get('/tendik', [EraporController::class, 'tendik'])->name('tendik');
         Route::get('/instruktur', [EraporController::class, 'instruktur'])->name('instruktur');
         Route::get('/asesor', [EraporController::class, 'asesor'])->name('asesor');

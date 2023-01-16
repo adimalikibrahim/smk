@@ -47,11 +47,18 @@
             </div>
         </div>
     </div>
+    @include('livewire.referensi.modal.import-ptk')
     @include('livewire.referensi.modal.detil-guru')
     @include('components.loader')
 </div>
 @push('scripts')
 <script>
+    Livewire.on('showModal', event => {
+        $('#ptkModal').modal('show');
+    })
+    Livewire.on('close-modal', event => {
+        $('#ptkModal').modal('hide');
+    })
     Livewire.on('detilGuru', event => {
         $('#detilGuru').modal('show');
     })
@@ -84,7 +91,7 @@
     window.addEventListener('gelar_belakang', event => {
         $('#gelar_belakang').val(event.detail.gelar_belakang)
     })
-    $('#gelar_depan').trigger('change')
-    $('#gelar_belakang').trigger('change')
+    // $('#gelar_depan').trigger('change')
+    // $('#gelar_belakang').trigger('change')
 </script>
 @endpush

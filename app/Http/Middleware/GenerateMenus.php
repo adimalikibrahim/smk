@@ -81,7 +81,12 @@ class GenerateMenus
                             'smt' => collect([1,2]),
                             'cara_penilaian' => collect(['lengkap', 'sederhana'])
                         ])->append($this->setAppend())->prepend($this->icon('graduation-cap'))->link->attr($this->text_class());
-                        $menu->referensi_gtk->add('Tendik', 'tendik')->data([
+                        // $menu->referensi_gtk->add('Tendik', 'tendik')->data([
+                            // 'role' => ['admin', 'tu'], 
+                            // 'smt' => collect([1,2]),
+                            // 'cara_penilaian' => collect(['lengkap', 'sederhana'])
+                        // ])->append($this->setAppend())->prepend($this->icon('graduation-cap'))->link->attr($this->text_class());
+                        $menu->referensi_gtk->add('Guru Keluar', 'guru-keluar')->data([
                             'role' => ['admin', 'tu'], 
                             'smt' => collect([1,2]),
                             'cara_penilaian' => collect(['lengkap', 'sederhana'])
