@@ -50,6 +50,7 @@ Route::middleware([
         Route::get('/asesor', [EraporController::class, 'asesor'])->name('asesor');
         Route::get('/rombongan-belajar', [EraporController::class, 'rombongan_belajar'])->name('rombongan-belajar')->middleware('team:admin,waka,tu');
         Route::get('/rombel-pilihan', [EraporController::class, 'rombel_pilihan'])->name('rombel-pilihan')->middleware('team:admin,waka,tu');
+        Route::get('/jurusan', [EraporController::class, 'jurusan'])->name('jurusan')->middleware('team:admin,waka,tu');
         Route::get('/peserta-didik', [EraporController::class, 'peserta_didik'])->name('peserta-didik');
         Route::get('/peserta-didik-aktif', [EraporController::class, 'peserta_didik_aktif'])->name('peserta-didik-aktif');
         Route::get('/peserta-didik-keluar', [EraporController::class, 'peserta_didik_keluar'])->name('peserta-didik-keluar');

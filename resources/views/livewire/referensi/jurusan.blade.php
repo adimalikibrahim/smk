@@ -59,18 +59,18 @@
             </div>
         </div>
     </div>
+    @include('livewire.referensi.modal.tambah-jurusan')
     @include('livewire.referensi.modal.anggota-rombel')
     @include('livewire.referensi.modal.pembelajaran')
-    @include('livewire.referensi.modal.tambah-rombel')
     @include('components.loader')
 </div>
 @push('scripts')
 <script>
     Livewire.on('showModal', event => {
-        $('#tambahRombel').modal('show');
+        $('#tambahJurusan').modal('show');
     })
     Livewire.on('close-modal', event => {
-        $('#tambahRombel').modal('hide');
+        $('#tambahJurusan').modal('hide');
     })
     Livewire.on('show-pembelajaran', event => {
         $('#pembelajaranModal').modal('show');

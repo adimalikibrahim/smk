@@ -11,9 +11,10 @@ use App\Models\Peserta_didik;
 use App\Models\Pembelajaran;
 use App\Models\Anggota_rombel;
 use App\Models\Guru;
+use App\Models\Jurusan_sp;
 use App\Models\Kelompok;
 
-class DataRombonganBelajar extends Component
+class Jurusan extends Component
 {
     use WithPagination;
     use LivewireAlert;
@@ -40,24 +41,23 @@ class DataRombonganBelajar extends Component
     public $nama_kelas;
     public $anggota_rombel_id;
     public $rombongan_belajar_id;
-    public $pembelajaran_id;
 
     public function getListeners()
     {
         return [
             'confirmed_delete',
             'pembelajaranTersimpan',
-            'hapus_pembelajaran',
+            'hapus_pembelajaran'
         ];
     }
     public function render()
     {
         $where = function($query){
-            $query->where('jenis_rombel', 1);
+            $query->where('jenis_rombel', 16);
             $query->where('semester_id', session('semester_aktif'));
             $query->where('sekolah_id', session('sekolah_id'));
         };
-        return view('livewire.referensi.data-rombongan-belajar', [
+        return view('livewire.referensi.jurusan', [
             'collection' => Rombongan_belajar::where($where)->with([
                 'wali_kelas' => function($query){
                     $query->select('guru_id', 'nama');
@@ -78,7 +78,7 @@ class DataRombonganBelajar extends Component
                     $query->select('guru_id')
                     ->from('guru')
                     ->where('sekolah_id', session('sekolah_id'))
-                    ->where('jenis_rombel', 1)
+                    ->where('jenis_rombel', 16)
                     ->where('semester_id', session('semester_aktif'))
                     ->where('nama', 'ILIKE', '%' . $this->search . '%');
                 });
@@ -96,6 +96,30 @@ class DataRombonganBelajar extends Component
     }
     public function addModal(){
         $this->emit('showModal');
+    }
+    public function store(){
+        $this->validate(
+            [
+                'nama.*' => 'required',
+                'id.*' => 'required|unique:jurusan_sp,jurusan_id',
+            ],
+            [
+                'nama.*.required' => 'Nama Jurusan tidak boleh kosong!',
+                'id.*.required' => 'Id tidak boleh kosong!',
+            ]
+        );
+        Jurusan_sp::create([
+            'jurusan_sp_id'         => Str::uuid(),
+            'jurusan_sp_id_dapodik' => session('sekolah_id'),
+            'sekolah_id'		    => session('sekolah_id'),
+            'jurusan_id'		    => $this->jurusan_id,
+            'nama_jurusan_sp'		=> $this->nama,
+            'last_sync'			=> now(),
+        ]);
+        $this->alert('success', 'Berhasil', [
+            'text' => 'Data Paket UKK berhasil disimpan!'
+        ]);
+        $this->emit('close-modal');
     }
     public function getAnggota($rombongan_belajar_id){
         $this->rombongan_belajar_id = $rombongan_belajar_id;
@@ -131,6 +155,14 @@ class DataRombonganBelajar extends Component
             $no_urut[$pembelajaran->pembelajaran_id] = $pembelajaran->no_urut;
             $nama_mata_pelajaran[$pembelajaran->pembelajaran_id] = $pembelajaran->nama_mata_pelajaran;
             $pembelajaran_id[] = $pembelajaran->pembelajaran_id;
+            /*$this->dispatchBrowserEvent('pharaonic.select2.load', [
+                'component' => $this->id,
+                'target'    => '#pengajar_'.$urut,
+            ]);
+            $this->dispatchBrowserEvent('pharaonic.select2.load', [
+                'component' => $this->id,
+                'target'    => '#kelompok_id_'.$urut,
+            ]);*/
         }
         $this->pengajar = $pengajar;
         $this->kelompok_id = $kelompok_id;
@@ -147,16 +179,6 @@ class DataRombonganBelajar extends Component
             'nama_mata_pelajaran' => $this->nama_mata_pelajaran,
             'pembelajaran_id' => $this->pembelajaran_id,
         ]);
-        /*foreach($this->pembelajaran as $urut => $pembelajaran){
-            $this->dispatchBrowserEvent('pharaonic.select2.load', [
-                'component' => $this->id,
-                'target'    => '#pengajar_'.$urut,
-            ]);
-            $this->dispatchBrowserEvent('pharaonic.select2.load', [
-                'component' => $this->id,
-                'target'    => '#kelompok_id_'.$urut,
-            ]);
-        }*/
         $this->dispatchBrowserEvent('pharaonic.select2.init');
     }
     public function simpanPembelajaran(){
