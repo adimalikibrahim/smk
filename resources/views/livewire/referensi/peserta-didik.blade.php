@@ -40,7 +40,6 @@
                             <th class="text-center">NISN</th>
                             <th class="text-center">L/P</th>
                             <th class="text-center">Tempat, Tanggal Lahir</th>
-                            <th class="text-center">Agama</th>
                             <th class="text-center">Kelas</th>
                             @role(['admin', 'waka', 'tu', 'wali'], session('semester_id'))
                             <th class="text-center">Detil</th>
@@ -55,8 +54,11 @@
                                 <td class="text-center">{{$item->nisn}}</td>
                                 <td class="text-center">{{$item->jenis_kelamin}}</td>
                                 <td>{{$item->tempat_lahir}}, {{$item->tanggal_lahir}}</td>
-                                <td>{{$item->agama->nama}}</td>
-                                <td>{{($item->anggota_rombel) ? $item->anggota_rombel->rombongan_belajar->nama : '-'}}</td>
+                                @if ($item->anggota_rombel)
+                                    <td>{{ $item->anggota_rombel->rombongan_belajar->nama }}</td>
+                                @else
+                                    <td class="text-center"><button class="btn btn-warning btn-sm">Masuk Kelas</button></td>
+                                @endif
                                 @role(['admin', 'waka', 'tu', 'wali'], session('semester_id'))
                                 <td class="text-center"><button class="btn btn-info btn-sm" wire:click="getID('{{$item->peserta_didik_id}}')">Detil</button></td>
                                 @endrole
@@ -109,7 +111,7 @@
         $('#filter_jurusan').html('<option value="">== Filter Jurusan ==</option>')
         $('#filter_rombel').html('<option value="">== Filter Rombel ==</option>')
         $.each(event.detail.data_jurusan, function (i, item) {
-            $('#filter_jurusan').append($('<option>', { 
+            $('#filter_jurusan').append($('<option>', {
                 value: item.jurusan_sp_id,
                 text : item.nama_jurusan_sp
             }));
@@ -118,7 +120,7 @@
     window.addEventListener('data_rombel', event => {
         $('#filter_rombel').html('<option value="">== Filter Rombel ==</option>')
         $.each(event.detail.data_rombel, function (i, item) {
-            $('#filter_rombel').append($('<option>', { 
+            $('#filter_rombel').append($('<option>', {
                 value: item.rombongan_belajar_id,
                 text : item.nama
             }));

@@ -24,11 +24,11 @@ class PesertaDidikAktif extends Component
     use WithPagination, WithFileUploads, LivewireAlert;
     protected $paginationTheme = 'bootstrap';
     public $search = '';
-    
+
     private function loggedUser(){
         return auth()->user();
     }
-    
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -48,7 +48,7 @@ class PesertaDidikAktif extends Component
     public $pd_id,
         $pd,
         $nama,
-        $nis = [], 
+        $nis = [],
         $nisn = [],
         $nik,
         $jenis_kelamin,
@@ -82,7 +82,7 @@ class PesertaDidikAktif extends Component
     public $result = [];
     public $imported_data = [];
     public $file_excel;
-    
+
     public function mount(){
         if($this->loggedUser()->hasRole('wali', session('semester_id'))){
             $this->rombongan_belajar_id = $this->loggedUser()->guru->rombongan_belajar->rombongan_belajar_id;
@@ -133,11 +133,11 @@ class PesertaDidikAktif extends Component
                 'color' => 'warning',
                 'text' => 'Sinkronisasi'
             ] : NULL,
-            'tombol_add' => [
-                'wire' => 'addModal',
-                'color' => 'primary',
-                'text' => 'Tambah Data',
-            ],
+            // 'tombol_add' => [
+            //     'wire' => 'addModal',
+            //     'color' => 'primary',
+            //     'text' => 'Tambah Data',
+            // ],
         ]);
     }
     public function addModal(){
@@ -267,7 +267,7 @@ class PesertaDidikAktif extends Component
         $this->pd_id = $pd_id;
         $this->pd = Peserta_didik::find($this->pd_id);
         $this->nama = $this->pd->nama;
-        $this->nis = $this->pd->no_induk; 
+        $this->nis = $this->pd->no_induk;
         $this->nisn = $this->pd->nisn;
         $this->nik = $this->pd->nik;
         $this->jenis_kelamin = $this->pd->jenis_kelamin;

@@ -14,12 +14,12 @@ class Rombongan_belajar extends Model
 	protected $table = 'rombongan_belajar';
 	protected $primaryKey = 'rombongan_belajar_id';
 	protected $guarded = [];
-	
+
 	public function wali_kelas()
 	{
 		return $this->hasOne(Guru::class, 'guru_id', 'guru_id');
 	}
-	
+
 	public function jurusan_sp()
 	{
 		return $this->hasOne(Jurusan_sp::class, 'jurusan_sp_id', 'jurusan_sp_id');
@@ -33,7 +33,7 @@ class Rombongan_belajar extends Model
 	{
 		return $this->hasMany(Pembelajaran::class, 'rombongan_belajar_id', 'rombongan_belajar_id');
 	}
-	
+
 	public function anggota_rombel()
 	{
 		return $this->hasMany(Anggota_rombel::class, 'rombongan_belajar_id', 'rombongan_belajar_id');
@@ -57,8 +57,8 @@ class Rombongan_belajar extends Model
 		return $this->hasManyThrough(
             Peserta_didik::class,
             Anggota_rombel::class,
-            'rombongan_belajar_id', // Foreign key on the environments table...
-            'peserta_didik_id', // Foreign key on the deployments table...
+            // 'rombongan_belajar_id', // Foreign key on the environments table...
+            // 'peserta_didik_id', // Foreign key on the deployments table...
             'rombongan_belajar_id', // Local key on the projects table...
             'peserta_didik_id' // Local key on the environments table...
         );

@@ -11,6 +11,7 @@ use App\Models\Peserta_didik;
 use App\Models\Pembelajaran;
 use App\Models\Anggota_rombel;
 use App\Models\Guru;
+use App\Models\Jurusan_sp;
 use App\Models\Kelompok;
 
 class DataRombonganBelajar extends Component
@@ -41,6 +42,9 @@ class DataRombonganBelajar extends Component
     public $anggota_rombel_id;
     public $rombongan_belajar_id;
     public $pembelajaran_id;
+    public $jurusan_id;
+    public $walas_id;
+    public $tingkat;
 
     public function getListeners()
     {
@@ -84,6 +88,8 @@ class DataRombonganBelajar extends Component
                 });
                 $query->where($where);
             })->paginate($this->per_page),
+            'all_jurusan' => Jurusan_sp::get(),
+            'all_guru' => Guru::get(),
             'breadcrumbs' => [
                 ['link' => "/", 'name' => "Beranda"], ['link' => '#', 'name' => 'Referensi'], ['name' => "Data Rombongan Belajar"]
             ],
@@ -97,6 +103,43 @@ class DataRombonganBelajar extends Component
     public function addModal(){
         $this->emit('showModal');
     }
+    public function store(){
+        $this->validate(
+            [
+                'jurusan_id' => 'required',
+                'walas_id' => 'required|unique:rombongan_belajar,guru_id',
+                'tingkat' => 'required',
+            ],
+            [
+                'jurusan_id.required' => 'jurusan Jurusan tidak boleh kosong!',
+                'walas_id.required' => 'walas tidak boleh kosong!',
+                'walas_id.unique' => 'walas sudah digunakan kelas lain!',
+                'tingkat.required' => 'tingkat Jurusan tidak boleh kosong!',
+            ]
+        );
+        $jurusan = Jurusan_sp::find($this->jurusan_id)->first();
+        if($jurusan){
+            Rombongan_belajar::create([
+                'rombongan_belajar_id'         => Str::uuid(),
+                'sekolah_id'		    => session('sekolah_id'),
+                'semester_id'           => session('semester_aktif'),
+                'jurusan_id'		    => $jurusan->jurusan_id,
+                'jurusan_sp_id'		    => $jurusan->jurusan_sp_id,
+                'guru_id'		        => $this->walas_id,
+                'nama'		            => ucwords($this->tingkat.' '.$jurusan->nama_jurusan_sp),
+                'tingkat'               => $this->tingkat,
+                'last_sync'			    => now(),
+            ]);
+        }
+
+        $this->reset(['walas_id','jurusan_id','tingkat']);
+        $this->alert('success', 'Berhasil', [
+            'text' => 'Data Jurusan berhasil disimpan!'
+        ]);
+        $this->emit('close-modal');
+    }
+
+
     public function getAnggota($rombongan_belajar_id){
         $this->rombongan_belajar_id = $rombongan_belajar_id;
         $this->anggota_rombel = Peserta_didik::with(['anggota_rombel' => function($query) use ($rombongan_belajar_id){
