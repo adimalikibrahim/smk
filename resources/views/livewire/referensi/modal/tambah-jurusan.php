@@ -8,12 +8,6 @@
                 </div>
                 <div class="modal-body">
                     <div class="row mb-2">
-                        <label for="nama" class="col-sm-3 col-form-label">Id Jurusan</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" wire:model="id">
-                        </div>
-                    </div>
-                    <div class="row mb-2">
                         <label for="nama" class="col-sm-3 col-form-label">Nama Jurusan</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control" wire:model="nama">

@@ -133,6 +133,7 @@
                         <div class="col-sm-9">
                             <input type="email" class="form-control @error('email') is-invalid @enderror" wire:model.lazy="email">
                             @error('email') <span class="text-danger">{{$message}}</span> @enderror
+                            
                         </div>
                     </div>
                     <div class="row mb-2">
