@@ -19,7 +19,7 @@ class CreateAnggotaRombelTable extends Migration
 			$table->string('semester_id', 5);
 			$table->uuid('rombongan_belajar_id');
 			$table->uuid('peserta_didik_id');
-			$table->uuid('anggota_rombel_id_dapodik');
+			$table->uuid('anggota_rombel_id_dapodik')->nullable();
 			$table->uuid('anggota_rombel_id_migrasi')->nullable();
 			$table->timestamps();
 			$table->softDeletes();

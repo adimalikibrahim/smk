@@ -47,17 +47,17 @@
             </div>
         </div>
     </div>
-    @include('livewire.referensi.modal.import-ptk')
+    @include('livewire.referensi.modal.tambah-walas')
     @include('livewire.referensi.modal.detil-guru')
     @include('components.loader')
 </div>
 @push('scripts')
 <script>
     Livewire.on('showModal', event => {
-        $('#ptkModal').modal('show');
+        $('#tambahWalas').modal('show');
     })
     Livewire.on('close-modal', event => {
-        $('#ptkModal').modal('hide');
+        $('#tambahWalas').modal('hide');
     })
     Livewire.on('detilGuru', event => {
         $('#detilGuru').modal('show');

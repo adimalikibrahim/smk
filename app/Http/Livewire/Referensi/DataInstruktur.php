@@ -96,7 +96,7 @@ class DataInstruktur extends Component
             'tombol_add' => [
                 'wire' => 'addModal',
                 'color' => 'primary',
-                'text' => 'Tambah Data',
+                'text' => 'Tambah Walas',
             ],
         ]);
     }

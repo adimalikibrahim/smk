@@ -19,13 +19,13 @@ class CreateRombonganBelajarTable extends Migration
 			$table->string('semester_id', 5);
 			$table->string('jurusan_id', 25)->nullable();
 			$table->uuid('jurusan_sp_id')->nullable();
-            $table->integer('kurikulum_id');
+            $table->integer('kurikulum_id')->nullable();
 			$table->string('nama');
 			$table->uuid('guru_id');
 			$table->uuid('ptk_id')->nullable();
 			$table->integer('tingkat');
-			$table->decimal('jenis_rombel', 2, 0);
-			$table->uuid('rombel_id_dapodik');
+			$table->decimal('jenis_rombel')->default('1');
+			$table->uuid('rombel_id_dapodik')->nullable();
 			$table->integer('kunci_nilai')->default('0');
 			$table->uuid('rombongan_belajar_id_migrasi')->nullable();
 			$table->timestamps();
