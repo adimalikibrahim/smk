@@ -1,10 +1,10 @@
 <div>
-    <div wire:ignore.self class="modal fade" id="detilPD" tabindex="-1" aria-labelledby="detilPDLabel"
-        aria-hidden="true" data-bs-backdrop="true">
+    <div wire:ignore.self class="modal fade" id="detilPD" tabindex="-1" aria-labelledby="detilPDLabel" aria-hidden="true"
+        data-bs-backdrop="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="detilPDLabel">Detil {{$data}}</h5>
+                    <h5 class="modal-title" id="detilPDLabel">Detil {{ $data }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -53,7 +53,9 @@
                     <div class="row mb-2">
                         <label for="status" class="col-sm-3 col-form-label">Status dalam keluarga</label>
                         <div class="col-sm-9" wire:ignore>
-                            <select id="status" class="form-select" wire:model="status" data-pharaonic="select2" data-component-id="{{ $this->id }}" data-search-off="true" data-parent="#detilPD" data-placeholder="== Pilih Status ==">
+                            <select id="status" class="form-select" wire:model="status" data-pharaonic="select2"
+                                data-component-id="{{ $this->id }}" data-search-off="true" data-parent="#detilPD"
+                                data-placeholder="== Pilih Status ==">
                                 <option value="Anak Kandung">Anak Kandung</option>
                                 <option value="Anak Tiri">Anak Tiri</option>
                                 <option value="Anak Angkat">Anak Angkat</option>
@@ -110,16 +112,15 @@
                     </div>
                     <div class="row mb-2">
                         <label for="diterima_kelas" class="col-sm-3 col-form-label">Diterima dikelas</label>
-                        <div class="col-sm-9">
-                            <div class="input-group">
-                                <button wire:loading wire:target="syncPD" class="btn btn-outline-primary" type="button" id="button-addon1">
-                                    <div class="spinner-border spinner-border-sm text-info" role="status">
-                                        <span class="visually-hidden">Loading...</span>
-                                    </div>                                      
-                                </button>
-                                <button wire:loading.remove wire:target="syncPD" class="btn btn-outline-primary" type="button" id="button-addon1" wire:click="syncPD"><i class="fa-solid fa-rotate"></i></button>
-                                <input wire:model="diterima_kelas" type="text" class="form-control" placeholder="" aria-label="Diterima dikelas" aria-describedby="button-addon1">
-                          </div>                              
+                        <div class="col-sm-9" wire:ignore>
+                            <select class="form-select" wire:model="diterima_kelas" data-pharaonic="select2"
+                                data-component-id="{{ $this->id }}" data-search-off="" data-parent="#detilPD"
+                                data-placeholder="== Pilih Rombel ==">
+                                <option value="">== Pilih Rombel ==</option>
+                                @foreach ($rombel as $rom)
+                                    <option value="{{ $rom->rombongan_belajar_id }}">{{ $rom->nama }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="row mb-2">
@@ -131,9 +132,12 @@
                     <div class="row mb-2">
                         <label for="email" class="col-sm-3 col-form-label">Email</label>
                         <div class="col-sm-9">
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" wire:model.lazy="email">
-                            @error('email') <span class="text-danger">{{$message}}</span> @enderror
-                            
+                            <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                wire:model.lazy="email">
+                            @error('email')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+
                         </div>
                     </div>
                     <div class="row mb-2">
@@ -181,23 +185,29 @@
                     <div class="row mb-2">
                         <label for="kerja_wali" class="col-sm-3 col-form-label">Pekerjaan Wali</label>
                         <div class="col-sm-9" wire:ignore>
-                            <select id="kerja_wali" class="form-select" wire:model="kerja_wali" data-pharaonic="select2" data-component-id="{{ $this->id }}" data-search-off="true" data-parent="#detilPD" data-placeholder="== Pilih Pekerjaan Wali ==">
+                            <select id="kerja_wali" class="form-select" wire:model="kerja_wali"
+                                data-pharaonic="select2" data-component-id="{{ $this->id }}"
+                                data-search-off="true" data-parent="#detilPD"
+                                data-placeholder="== Pilih Pekerjaan Wali ==">
                                 <option value="">== Pilih Pekerjaan Wali ==</option>
-                                @foreach($pekerjaan_wali as $wali)
-                                <option value="{{$wali->pekerjaan_id}}">{{$wali->nama}}</option>
+                                @foreach ($pekerjaan_wali as $wali)
+                                    <option value="{{ $wali->pekerjaan_id }}">{{ $wali->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button wire:loading.remove wire:target="perbaharui" type="button" class="btn btn-secondary" data-bs-dismiss="modal" wire:click.prevent="tutup">Tutup</button>
-                    <button wire:loading wire:target="perbaharui" class="btn btn-outline-primary" type="button" id="button-addon1">
+                    <button wire:loading.remove wire:target="perbaharui" type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal" wire:click.prevent="tutup">Tutup</button>
+                    <button wire:loading wire:target="perbaharui" class="btn btn-outline-primary" type="button"
+                        id="button-addon1">
                         <div class="spinner-border spinner-border-sm text-info" role="status">
                             <span class="visually-hidden">Loading...</span>
-                        </div>                                      
+                        </div>
                     </button>
-                    <button wire:loading.remove wire:target="perbaharui" type="submit" class="btn btn-primary" wire:click.prevent="perbaharui">Perbaharui</button>
+                    <button wire:loading.remove wire:target="perbaharui" type="submit" class="btn btn-primary"
+                        wire:click.prevent="perbaharui">Perbaharui</button>
                 </div>
             </div>
         </div>

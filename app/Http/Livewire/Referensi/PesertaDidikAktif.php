@@ -124,6 +124,8 @@ class PesertaDidikAktif extends Component
                 });
             })->paginate($this->per_page),
             'pekerjaan_wali' => Pekerjaan::get(),
+            'rombel' => Rombongan_belajar::get(),
+
             'breadcrumbs' => [
                 ['link' => "/", 'name' => "Beranda"], ['link' => '#', 'name' => 'Referensi'], ['name' => "Data Peserta Didik Aktif"]
             ],

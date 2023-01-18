@@ -18,17 +18,18 @@ use Carbon\Carbon;
 use Livewire\WithFileUploads;
 use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Agama;
+use App\Models\Anggota_rombel;
 
 class PesertaDidik extends Component
 {
     use WithPagination, WithFileUploads, LivewireAlert;
     protected $paginationTheme = 'bootstrap';
     public $search = '';
-    
+
     private function loggedUser(){
         return auth()->user();
     }
-    
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -48,7 +49,7 @@ class PesertaDidik extends Component
     public $pd_id,
         $pd,
         $nama,
-        $nis = [], 
+        $nis = [],
         $nisn = [],
         $nik,
         $jenis_kelamin,
@@ -83,7 +84,7 @@ class PesertaDidik extends Component
     public $imported_data = [];
     public $file_excel;
     public $file_path;
-    
+
     public function mount(){
         if($this->loggedUser()->hasRole('wali', session('semester_id'))){
             $this->rombongan_belajar_id = $this->loggedUser()->guru->rombongan_belajar->rombongan_belajar_id;
@@ -93,7 +94,8 @@ class PesertaDidik extends Component
     }
     public function render(){
         return view('livewire.referensi.peserta-didik', [
-            'collection' => Peserta_didik::with(['anggota_rombel' => $this->kondisi()])
+            'collection' => Peserta_didik::where('diterima_kelas', null)
+            ->with(['anggota_rombel' => $this->kondisi()])
             ->orderBy($this->sortby, $this->sortbydesc)
             ->when($this->search, function($query) {
                 $query->where('nama', 'ILIKE', '%' . $this->search . '%');
@@ -106,24 +108,25 @@ class PesertaDidik extends Component
                 $query->whereHas('anggota_rombel', $this->kondisi());
                 $query->orWhere('tempat_lahir', 'ILIKE', '%' . $this->search . '%');
                 $query->whereHas('anggota_rombel', $this->kondisi());
-            })->when($this->filter_tingkat, function($query){
-                $query->whereHas('anggota_rombel', function($query){
-                    $query->wherehas('rombongan_belajar', function($query){
-                        $query->where('tingkat', $this->filter_tingkat);
-                    });
-                });
-            })->when($this->filter_jurusan, function($query){
-                $query->whereHas('anggota_rombel', function($query){
-                    $query->wherehas('rombongan_belajar', function($query){
-                        $query->where('jurusan_sp_id', $this->filter_jurusan);
-                    });
-                });
-            })->when($this->filter_rombel, function($query){
-                $query->whereHas('anggota_rombel', function($query){
-                    $query->where('rombongan_belajar_id', $this->filter_rombel);
-                });
+            // })->when($this->filter_tingkat, function($query){
+            //     $query->whereHas('anggota_rombel', function($query){
+            //         $query->wherehas('rombongan_belajar', function($query){
+            //             $query->where('tingkat', $this->filter_tingkat);
+            //         });
+            //     });
+            // })->when($this->filter_jurusan, function($query){
+            //     $query->whereHas('anggota_rombel', function($query){
+            //         $query->wherehas('rombongan_belajar', function($query){
+            //             $query->where('jurusan_sp_id', $this->filter_jurusan);
+            //         });
+            //     });
+            // })->when($this->filter_rombel, function($query){
+            //     $query->whereHas('anggota_rombel', function($query){
+            //         $query->where('rombongan_belajar_id', $this->filter_rombel);
+            //     });
             })->paginate($this->per_page),
             'pekerjaan_wali' => Pekerjaan::get(),
+            'rombel' => Rombongan_belajar::get(),
             'breadcrumbs' => [
                 ['link' => "/", 'name' => "Beranda"], ['link' => '#', 'name' => 'Referensi'], ['name' => "Data Peserta Didik"]
             ],
@@ -269,7 +272,7 @@ class PesertaDidik extends Component
         $this->pd_id = $pd_id;
         $this->pd = Peserta_didik::find($this->pd_id);
         $this->nama = $this->pd->nama;
-        $this->nis = $this->pd->no_induk; 
+        $this->nis = $this->pd->no_induk;
         $this->nisn = $this->pd->nisn;
         $this->nik = $this->pd->nik;
         $this->jenis_kelamin = $this->pd->jenis_kelamin;
@@ -332,7 +335,16 @@ class PesertaDidik extends Component
         $this->pd->telp_wali = $this->telp_wali;
         $this->pd->kerja_wali = $this->kerja_wali;
         if($this->pd->save()){
-            if($this->pd->user){
+            if ($this->pd->user->diterima_kelas = $this->diterima_kelas) {
+                $user = Anggota_rombel::create([
+                    'anggota_rombel_id' => Str::uuid(),
+                    'sekolah_id'	=> session('sekolah_id'),
+                    'semester_id'	=> session('semester_aktif'),
+                    'rombongan_belajar_id'	=> $this->diterima_kelas,
+                    'peserta_didik_id'	=> $this->pd_id,
+                    'last_sync'	=> now(),
+                ]);
+            }elseif($this->pd->user){
                 $this->pd->user->email = $this->email;
                 $this->pd->user->save();
             } else {
