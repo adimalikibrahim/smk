@@ -81,7 +81,7 @@ class DataInstruktur extends Component
     {
         return view('livewire.referensi.data-instruktur', [
             'data_ptk' => Guru::where(function($query){
-                $query->whereIn('jenis_ptk_id', jenis_gtk('instruktur'));
+                $query->where('jenis_ptk_id', 99);
                 $query->where('sekolah_id', session('sekolah_id'));
             })->with(['sekolah' => function($query){
                 $query->select('sekolah_id', 'nama');

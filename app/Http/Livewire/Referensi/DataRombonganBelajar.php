@@ -45,6 +45,7 @@ class DataRombonganBelajar extends Component
     public $jurusan_id;
     public $walas_id;
     public $tingkat;
+    public $nama;
 
     public function getListeners()
     {
@@ -108,12 +109,13 @@ class DataRombonganBelajar extends Component
             [
                 'jurusan_id' => 'required',
                 'walas_id' => 'required|unique:rombongan_belajar,guru_id',
+                'nama' => 'unique:rombongan_belajar,nama',
                 'tingkat' => 'required',
             ],
             [
                 'jurusan_id.required' => 'jurusan Jurusan tidak boleh kosong!',
                 'walas_id.required' => 'walas tidak boleh kosong!',
-                'walas_id.unique' => 'walas sudah digunakan kelas lain!',
+                'nama.unique' => 'Nama Rombel sudah digunakan!',
                 'tingkat.required' => 'tingkat Jurusan tidak boleh kosong!',
             ]
         );
@@ -233,18 +235,6 @@ class DataRombonganBelajar extends Component
         $this->reset(['nama_kelas', 'pembelajaran', 'pengajar', 'kelompok_id', 'no_urut']);
         $this->emit('close-modal');
     }
-    public function confirmed_delete(){
-        $a = Anggota_rombel::find($this->anggota_rombel_id);
-        $a->delete();
-        $this->alert('success', 'Anggota Rombel berhasil dikeluarkan', [
-            'showConfirmButton' => true,
-            'confirmButtonText' => 'OK',
-            'onConfirmed' => 'confirmed',
-            'allowOutsideClick' => false,
-            'timer' => null
-        ]);
-        $this->getAnggota($this->rombongan_belajar_id);
-    }
     public function keluarkanAnggota($anggota_rombel_id, $rombongan_belajar_id){
         $this->rombongan_belajar_id = $rombongan_belajar_id;
         $this->anggota_rombel_id = $anggota_rombel_id;
@@ -258,6 +248,19 @@ class DataRombonganBelajar extends Component
             'allowOutsideClick' => false,
             'timer' => null
         ]);
+    }
+    public function confirmed_delete(){
+        $a = Anggota_rombel::find($this->anggota_rombel_id)->first();
+        $p = Peserta_didik::where('peserta_didik_id', $a->peserta_didik_id)->update(['diterima_kelas' => null]);
+        $a->forceDelete();
+        $this->alert('success', 'Anggota Rombel berhasil dikeluarkan', [
+            'showConfirmButton' => true,
+            'confirmButtonText' => 'OK',
+            'onConfirmed' => 'confirmed',
+            'allowOutsideClick' => false,
+            'timer' => null
+        ]);
+        $this->getAnggota($this->rombongan_belajar_id);
     }
     public function getPengajar(){
         $this->guru_pengajar = Guru::where('sekolah_id', session('sekolah_id'))->orderBy('nama')->get();

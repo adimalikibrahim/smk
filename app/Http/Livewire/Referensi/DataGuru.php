@@ -382,6 +382,7 @@ class DataGuru extends Component
             'timer' => null
         ]);
     }
+    
     public function confirmed(){
         if($this->guru && $this->guru->delete()){
             $this->alert('success', 'Data Guru berhasil dihapus', [

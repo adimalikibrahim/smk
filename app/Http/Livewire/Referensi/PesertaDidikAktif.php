@@ -18,6 +18,7 @@ use Carbon\Carbon;
 use Livewire\WithFileUploads;
 use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Agama;
+use App\Models\Guru;
 
 class PesertaDidikAktif extends Component
 {
@@ -82,7 +83,8 @@ class PesertaDidikAktif extends Component
     public $result = [];
     public $imported_data = [];
     public $file_excel;
-
+    public $peserta_didik_id;
+ 
     public function mount(){
         if($this->loggedUser()->hasRole('wali', session('semester_id'))){
             $this->rombongan_belajar_id = $this->loggedUser()->guru->rombongan_belajar->rombongan_belajar_id;
@@ -430,5 +432,46 @@ class PesertaDidikAktif extends Component
     public function setTglLahir($value){
         $this->tanggal_lahir = Carbon::createFromTimeStamp(strtotime($value))->format('Y-m-d');
         $this->tanggal_lahir_str = Carbon::createFromTimeStamp(strtotime($value))->translatedFormat('j F Y');
+    }
+    public function jadiWalas($peserta_didik_id){
+        $this->peserta_didik_id = $peserta_didik_id;
+        $a = Peserta_didik::find($this->peserta_didik_id);
+        $cek = Guru::find($a->peserta_didik_id);
+        if($cek == null){
+            Guru::create(
+                [
+                    'nik' => $a->nik,
+                    'guru_id' => $a->peserta_didik_id,
+                    'sekolah_id' => session('sekolah_id'),
+                    'status_kepegawaian_id' => 0,
+                    'kode_wilayah' => '016001AA',
+                    'nama' => $a->nama,
+                    'nuptk' => '10101010101010',
+                    'nip' => $a->no_induk,
+                    'jenis_kelamin' => $a->jenis_kelamin,
+                    'tempat_lahir' => $a->tempat_lahir,
+                    'tanggal_lahir' => date('Y-m-d', strtotime($a->tanggal_lahir)),
+                    'agama_id' => $a->agama_id,
+                    'alamat' => $a->alamat ? $a->alamat : null,
+                    'rt' => $a->rt ? $a->rt : null,
+                    'rw' => $a->rw ? $a->rw : null,
+                    'desa_kelurahan' => $a->desa_kelurahan ? $a->desa_kelurahan : null,
+                    'kecamatan' => $a->kecamatan ? $a->kecamatan : null,
+                    'kode_pos' => $a->kode_pos ? $a->kode_pos : null,
+                    'no_hp' => $a->no_telp ? $a->no_telp : null,
+                    'email' => $a->email ? $a->email : null,
+                    'jenis_ptk_id' => 99,
+                    'last_sync' => now(),
+                ]
+            );
+            $this->alert('success', 'Berhasil jadi Walas', [
+                'position' => 'center'
+            ]);
+            $this->emit('close-modal');
+        } else {
+            $this->alert('error', 'Sudah Jadi Walas. Silahkan gunakan orang berbeda!', [
+                'position' => 'center'
+            ]);
+        }
     }
 }

@@ -383,6 +383,7 @@ class PesertaDidik extends Component
                 'toast' => false,
             ]);
         }
+        $this->reset('diterima_kelas');
         $this->emit('close-modal');
     }
     public function tutup(){
