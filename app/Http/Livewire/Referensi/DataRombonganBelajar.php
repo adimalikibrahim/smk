@@ -50,13 +50,13 @@ class DataRombonganBelajar extends Component
     public function getListeners()
     {
         return [
-            'confirmed_delete',
+            'keluarkan_Anggota',
             'pembelajaranTersimpan',
             'hapus_pembelajaran',
+            'hapus_rombel',
         ];
     }
-    public function render()
-    {
+    public function render(){
         $where = function($query){
             $query->where('jenis_rombel', 1);
             $query->where('semester_id', session('semester_aktif'));
@@ -113,14 +113,16 @@ class DataRombonganBelajar extends Component
                 'tingkat' => 'required',
             ],
             [
-                'jurusan_id.required' => 'jurusan Jurusan tidak boleh kosong!',
+                'jurusan_id.required' => 'Jurusan tidak boleh kosong!',
                 'walas_id.required' => 'walas tidak boleh kosong!',
                 'nama.unique' => 'Nama Rombel sudah digunakan!',
                 'tingkat.required' => 'tingkat Jurusan tidak boleh kosong!',
             ]
         );
-        $jurusan = Jurusan_sp::find($this->jurusan_id)->first();
-        if($jurusan){
+        $jurusan = Jurusan_sp::find($this->jurusan_id);
+        $nama = $this->tingkat.' '.$jurusan->nama_jurusan_sp;
+        $cek = Rombongan_belajar::where('nama', $nama)->first();
+        if(!$cek){
             Rombongan_belajar::create([
                 'rombongan_belajar_id'         => Str::uuid(),
                 'sekolah_id'		    => session('sekolah_id'),
@@ -132,16 +134,19 @@ class DataRombonganBelajar extends Component
                 'tingkat'               => $this->tingkat,
                 'last_sync'			    => now(),
             ]);
+            $this->reset(['walas_id','jurusan_id','tingkat']);
+            $this->alert('success', 'Berhasil', [
+                'text' => 'Data Jurusan berhasil disimpan!'
+            ]);
+            $this->emit('close-modal');
+        }else {
+            $this->alert('warning', 'Gagal', [
+                'text' => 'Data Rombel sudah ada!'
+            ]);
+            $this->emit('close-modal');
         }
 
-        $this->reset(['walas_id','jurusan_id','tingkat']);
-        $this->alert('success', 'Berhasil', [
-            'text' => 'Data Jurusan berhasil disimpan!'
-        ]);
-        $this->emit('close-modal');
     }
-
-
     public function getAnggota($rombongan_belajar_id){
         $this->rombongan_belajar_id = $rombongan_belajar_id;
         $this->anggota_rombel = Peserta_didik::with(['anggota_rombel' => function($query) use ($rombongan_belajar_id){
@@ -242,14 +247,14 @@ class DataRombonganBelajar extends Component
             'text' => 'Tindakan ini tidak dapat dikembalikan',
             'showConfirmButton' => true,
             'confirmButtonText' => 'OK',
-            'onConfirmed' => 'confirmed_delete',
+            'onConfirmed' => 'keluarkan_Anggota',
             'showCancelButton' => true,
             'cancelButtonText' => 'Batal',
             'allowOutsideClick' => false,
             'timer' => null
         ]);
     }
-    public function confirmed_delete(){
+    public function keluarkan_Anggota(){
         $a = Anggota_rombel::find($this->anggota_rombel_id)->first();
         $p = Peserta_didik::where('peserta_didik_id', $a->peserta_didik_id)->update(['diterima_kelas' => null]);
         $a->forceDelete();
@@ -310,6 +315,35 @@ class DataRombonganBelajar extends Component
                 'onConfirmed' => 'confirmed',
                 'allowOutsideClick' => false,
                 'timer' => null
+            ]);
+        }
+    }
+
+    public function hapusRombel($rombongan_belajar_id){
+        $this->rombongan_belajar_id = $rombongan_belajar_id;
+        $this->alert('question', 'Apakah Anda yakin?', [
+            'text' => 'Tindakan ini tidak dapat dikembalikan',
+            'showConfirmButton' => true,
+            'confirmButtonText' => 'OK',
+            'onConfirmed' => 'hapus_rombel',
+            'showCancelButton' => true,
+            'cancelButtonText' => 'Batal',
+            'allowOutsideClick' => false,
+            'timer' => null
+        ]);
+    }
+    public function hapus_rombel(){
+        $a = Anggota_rombel::where('rombongan_belajar_id', $this->rombongan_belajar_id)->count();
+        if($a == 0){
+            $b = Rombongan_belajar::find($this->rombongan_belajar_id);
+            $b->forceDelete();
+            $this->alert('success', 'Data Rombel berhasil dihapus', [
+                'position' => 'center'
+            ]);
+            $this->emit('close-modal');
+        } else {
+            $this->alert('error', 'Data Rombel gagal dihapus. Rombel Masih memiliki ('.$a.') Anggota!', [
+                'position' => 'center'
             ]);
         }
     }
