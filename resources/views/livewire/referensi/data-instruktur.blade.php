@@ -22,8 +22,11 @@
                                 <td class="text-center">{{$ptk->jenis_kelamin}}</td>
                                 <td>{{$ptk->tempat_lahir}}, {{$ptk->tanggal_lahir_indo}}</td>
                                 <td>{{$ptk->email}}</td>
-                                <td class="text-center">
+                                <td class="text-center" width="20%">
                                     <button class="btn btn-sm btn-primary" wire:click="detil('{{$ptk->guru_id}}')">Detil</button>
+                                    @role(['admin', 'waka', 'tu', 'wali'], session('semester_id'))
+                                    <button class="btn btn-danger btn-sm" wire:click="hapusGuru('{{$ptk->guru_id}}')">Hapus</button>
+                                    @endrole
                                 </td>
                             </tr>
                             @endforeach

@@ -17,6 +17,7 @@ use App\Models\Jenis_ptk;
 use App\Models\Status_kepegawaian;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Rombongan_belajar;
 use Carbon\Carbon;
 
 class DataInstruktur extends Component
@@ -75,7 +76,7 @@ class DataInstruktur extends Component
     public $file_path;
     public $tanggal_lahir_str;
 
-    protected $listeners = ['confirmed', 'setTglLahir'];
+    protected $listeners = ['hapus_guru', 'setTglLahir'];
 
     public function render()
     {
@@ -103,8 +104,7 @@ class DataInstruktur extends Component
     public function addModal(){
         $this->emit('showModal');
     }
-    public function updatedFileExcel()
-    {
+    public function updatedFileExcel(){
         $this->validate(
             [
                 'file_excel' => 'required|mimes:xlsx',
@@ -364,26 +364,29 @@ class DataInstruktur extends Component
             'position' => 'center'
         ]);
     }
-    public function hapus(){
+    public function hapusGuru($guru_id){
+        $this->guru_id = $guru_id;
         $this->alert('question', 'Apakah Anda yakin?', [
             'text' => 'Tindakan ini tidak dapat dikembalikan!',
             'showConfirmButton' => true,
             'confirmButtonText' => 'Yakin',
-            'onConfirmed' => 'confirmed',
+            'onConfirmed' => 'hapus_guru',
             'showCancelButton' => true,
             'cancelButtonText' => 'Batal',
             'allowOutsideClick' => false,//'() => !Swal.isLoading()',
             'timer' => null
         ]);
     }
-    public function confirmed(){
-        if($this->guru && $this->guru->delete()){
+    public function hapus_guru(){
+        $r = Rombongan_belajar::where('guru_id', $this->guru_id)->count();
+        if($r == 0){
+            $g = Guru::find($this->guru_id)->forceDelete();
             $this->alert('success', 'Data Instruktur berhasil dihapus', [
                 'position' => 'center'
             ]);
             $this->emit('close-modal');
         } else {
-            $this->alert('error', 'Data Instruktur gagal dihapus. Silahkan coba beberapa saat lagi!', [
+            $this->alert('error', 'Data Instruktur gagal dihapus. Guru Masih menjadi Wali Kelas!', [
                 'position' => 'center'
             ]);
         }

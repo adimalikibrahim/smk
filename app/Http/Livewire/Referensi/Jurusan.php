@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use Livewire\Component;
 use App\Models\Jurusan_sp;
+use App\Models\Rombongan_belajar;
 
 class Jurusan extends Component
 {
@@ -101,14 +102,15 @@ class Jurusan extends Component
         ]);
     }
     public function confirmed_delete(){
-        $a = Jurusan_sp::destroy($this->jurusan_sp_id);
-        if($a){
+        $r = Rombongan_belajar::where('jurusan_sp_id', $this->jurusan_sp_id)->count();
+        if($r == 0){
+            $a = Jurusan_sp::destroy($this->jurusan_sp_id);
             $this->alert('success', 'Data Jurusan berhasil dihapus', [
                 'position' => 'center'
             ]);
             $this->emit('close-modal');
         } else {
-            $this->alert('error', 'Data Jurusan gagal dihapus. Silahkan coba beberapa saat lagi!', [
+            $this->alert('error', 'Data Jurusan gagal dihapus. Jurusan Masih memiliki ('.$r.') Rombel!', [
                 'position' => 'center'
             ]);
         }
