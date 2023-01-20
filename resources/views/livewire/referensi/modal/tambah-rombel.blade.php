@@ -30,7 +30,7 @@
                         <label for="kurikulum_id" class="col-sm-3 col-form-label">Wali Kelas</label>
                         <div class="col-sm-12" wire:ignore>
                             <select id="walas_id" class="form-select @error('walas_id') is-invalid @enderror"
-                                data-component-id="{{ $this->id }}" data-search-off="true"
+                                data-component-id="{{ $this->id }}"  data-search-off="true"
                                 data-placeholder="== Pilih Wali Kelas ==" wire:model="walas_id"
                                 data-pharaonic="select2">
                                 <option value="">== Pilih Wali Kelas ==</option>
