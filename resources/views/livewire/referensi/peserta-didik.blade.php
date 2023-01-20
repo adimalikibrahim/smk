@@ -28,7 +28,7 @@
                                     @if ($item->anggota_rombel)
                                         <td>{{ $item->anggota_rombel->rombongan_belajar->nama }}</td>
                                     @else
-                                        <td class="text-center">-</td>
+                                        <td class="text-center"> - </td>
                                     @endif
                                     @role(['admin', 'waka', 'tu', 'wali'], session('semester_id'))
                                         <td class="text-center"><button class="btn btn-info btn-sm"

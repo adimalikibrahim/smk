@@ -113,8 +113,8 @@
                     <div class="row mb-2">
                         <label for="diterima_kelas" class="col-sm-3 col-form-label">Diterima dikelas</label>
                         <div class="col-sm-9" wire:ignore>
-                            <select id="diterima_kelas" class="form-select" wire:model="diterima_kelas" data-pharaonic="select2" required
-                                data-component-id="{{ $this->id }}" data-search-off="false" data-parent="#detilPD"
+                            <select id="diterima_kelas" class="form-select" wire:model="diterima_kelas" data-pharaonic="select2"
+                                data-component-id="{{ $this->id }}" data-search-off="true" data-parent="#detilPD"
                                 data-placeholder="== Pilih Rombel ==">
                                 <option value="">== Pilih Rombel ==</option>
                                 @foreach ($rombel as $rom)

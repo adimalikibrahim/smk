@@ -14,7 +14,6 @@
                                     <option value="10">Kelas 10</option>
                                     <option value="11">Kelas 11</option>
                                     <option value="12">Kelas 12</option>
-                                    <option value="13">Kelas 13</option>
                                 </select>
                             </div>
                         </div>
@@ -46,7 +45,6 @@
                             <th class="text-center">NISN</th>
                             <th class="text-center">L/P</th>
                             <th class="text-center">Tempat, Tanggal Lahir</th>
-                            <th class="text-center">Agama</th>
                             <th class="text-center">Kelas</th>
                             @role(['admin', 'waka', 'tu', 'wali'], session('semester_id'))
                                 <th class="text-center">Detil</th>
@@ -61,15 +59,19 @@
                                     <td class="text-center">{{ $item->nisn }}</td>
                                     <td class="text-center">{{ $item->jenis_kelamin }}</td>
                                     <td>{{ $item->tempat_lahir }}, {{ $item->tanggal_lahir }}</td>
-                                    <td>{{ $item->agama->nama }}</td>
                                     <td>{{ $item->anggota_rombel ? $item->anggota_rombel->rombongan_belajar->nama : '-' }}
                                     </td>
                                     @role(['admin', 'waka', 'tu', 'wali'], session('semester_id'))
                                         <td class="text-center">
-                                            <button class="btn btn-primary btn-sm"
-                                            wire:click.prevent="jadiWalas('{{$item->peserta_didik_id}}')">Jadi Walas</button>
-                                            <button class="btn btn-info btn-sm"
-                                                wire:click="getID('{{ $item->peserta_didik_id }}')">Detil</button>
+                                            <div class="btn-group" role="group">
+                                                <button id="btnAksi" type="button" class="btn btn-primary dropdown-toggle btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
+                                                  Detil
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="btnAksi">
+                                                  <li><a class="dropdown-item" wire:click="jadiWalas('{{$item->peserta_didik_id}}')">Pengurus</a></li>
+                                                  <li><a class="dropdown-item" wire:click="getID('{{ $item->peserta_didik_id }}')">Detil</a></li>
+                                                </ul>
+                                              </div>
                                         </td>
                                     @endrole
                                 </tr>

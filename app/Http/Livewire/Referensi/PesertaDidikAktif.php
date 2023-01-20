@@ -18,6 +18,7 @@ use Carbon\Carbon;
 use Livewire\WithFileUploads;
 use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Agama;
+use App\Models\Anggota_rombel;
 use App\Models\Guru;
 
 class PesertaDidikAktif extends Component
@@ -324,6 +325,7 @@ class PesertaDidikAktif extends Component
                 'email.unique' => 'Email sudah terdaftar di Database!',
             ]
         );
+        $this->pd->nama = $this->nama;
         $this->pd->status = $this->status;
         $this->pd->anak_ke = $this->anak_ke;
         $this->pd->diterima_kelas = $this->diterima_kelas;
